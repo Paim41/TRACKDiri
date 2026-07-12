@@ -1,0 +1,470 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMINISTRATOR
+}
+
+enum UserStatus {
+  ACTIVE
+  PENDING_VERIFICATION
+  SUSPENDED
+  DELETED
+}
+
+enum Theme {
+  SYSTEM
+  LIGHT
+  DARK
+}
+
+enum MeasurementSystem {
+  METRIC
+  IMPERIAL
+}
+
+enum ReminderStatus {
+  PENDING
+  SCHEDULED
+  SENT
+  SNOOZED
+  CANCELLED
+  FAILED
+}
+
+enum MedicationStatus {
+  TAKEN
+  SKIPPED
+  DELAYED
+  MISSED
+}
+
+model User {
+  id                  String               @id @default(cuid())
+  name                String
+  email               String               @unique
+  emailVerifiedAt     DateTime?
+  passwordHash        String?
+  role                Role                 @default(USER)
+  imageUrl            String?
+  status              UserStatus           @default(PENDING_VERIFICATION)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  deletedAt           DateTime?
+  accounts            Account[]
+  sessions            Session[]
+  verificationTokens  VerificationToken[]
+  passwordResetTokens PasswordResetToken[]
+  preference          UserPreference?
+  healthGoals         HealthGoal[]
+  waterSetting        WaterSetting?
+  waterEntries        WaterEntry[]
+  checklistTemplates  ChecklistTemplate[]
+  checklistCompletions ChecklistCompletion[]
+  mealEntries         MealEntry[]
+  exerciseEntries     ExerciseEntry[]
+  stepEntries         StepEntry[]
+  sleepEntries        SleepEntry[]
+  moodEntries         MoodEntry[]
+  medications         Medication[]
+  medicationLogs      MedicationLog[]
+  measurementEntries  MeasurementEntry[]
+  symptomEntries      SymptomEntry[]
+  reminders           Reminder[]
+  pushSubscriptions   PushSubscription[]
+  notificationLogs    NotificationLog[]
+  securityEvents      SecurityEvent[]
+  auditActorLogs      AuditLog[]           @relation("AuditActor")
+  auditTargetLogs     AuditLog[]           @relation("AuditTarget")
+
+  @@index([status])
+  @@index([emailVerifiedAt])
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  provider          String
+  providerAccountId String
+  accessToken       String?
+  refreshToken      String?
+  expiresAt         DateTime?
+  scope             String?
+  tokenType         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String    @id @default(cuid())
+  userId       String
+  tokenHash    String    @unique
+  expiresAt    DateTime
+  lastActiveAt DateTime  @default(now())
+  userAgent    String?
+  ipAddress    String?
+  revokedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([revokedAt])
+}
+
+model VerificationToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model UserPreference {
+  userId              String            @id
+  timezone            String            @default("UTC")
+  locale              String            @default("en-US")
+  dateFormat          String            @default("PP")
+  measurementSystem   MeasurementSystem @default(METRIC)
+  theme               Theme             @default(SYSTEM)
+  reducedMotion       Boolean           @default(false)
+  notificationEnabled Boolean           @default(false)
+  quietHoursStart     String            @default("22:00")
+  quietHoursEnd       String            @default("08:00")
+  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model HealthGoal {
+  id          String    @id @default(cuid())
+  userId      String
+  category    String
+  targetValue Float
+  unit        String
+  startDate   DateTime
+  endDate     DateTime?
+  active      Boolean   @default(true)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category, active])
+}
+
+model WaterSetting {
+  userId               String  @id
+  dailyGlassTarget     Int     @default(8)
+  glassSizeMl          Int     @default(250)
+  dailyTargetMl        Int     @default(2000)
+  reminderStartTime    String  @default("08:00")
+  reminderEndTime      String  @default("22:00")
+  reminderInterval     Int     @default(120)
+  weekendEnabled       Boolean @default(true)
+  finalReminderEnabled Boolean @default(true)
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WaterEntry {
+  id               String    @id @default(cuid())
+  userId           String
+  amountMl         Int
+  consumedAt       DateTime
+  timezone         String
+  source           String    @default("manual")
+  clientMutationId String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clientMutationId])
+  @@index([userId])
+  @@index([consumedAt])
+  @@index([deletedAt])
+}
+
+model ChecklistTemplate {
+  id           String                @id @default(cuid())
+  userId       String
+  title        String
+  recurrence   String                @default("DAILY")
+  reminderTime String?
+  position     Int                   @default(0)
+  active       Boolean               @default(true)
+  user         User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  completions  ChecklistCompletion[]
+
+  @@index([userId])
+  @@index([active])
+}
+
+model ChecklistCompletion {
+  id               String            @id @default(cuid())
+  userId           String
+  templateId       String
+  completedAt      DateTime
+  clientMutationId String
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template         ChecklistTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clientMutationId])
+  @@index([userId])
+  @@index([completedAt])
+}
+
+model MealEntry {
+  id            String   @id @default(cuid())
+  userId        String
+  mealType      String
+  title         String
+  description   String?
+  calories      Int?
+  protein       Float?
+  carbohydrates Float?
+  fat           Float?
+  fibre         Float?
+  sugar         Float?
+  sodium        Float?
+  consumedAt    DateTime
+  imageUrl      String?
+  notes         String?
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([consumedAt])
+}
+
+model ExerciseEntry {
+  id              String   @id @default(cuid())
+  userId          String
+  activityType    String
+  startedAt       DateTime
+  durationMinutes Int
+  distance        Float?
+  intensity       String?
+  calories        Int?
+  notes           String?
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([startedAt])
+}
+
+model StepEntry {
+  id            String   @id @default(cuid())
+  userId        String
+  date          DateTime
+  steps         Int
+  distance      Float?
+  activeMinutes Int?
+  source        String   @default("manual")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+}
+
+model SleepEntry {
+  id              String   @id @default(cuid())
+  userId          String
+  bedtime         DateTime
+  wakeTime        DateTime
+  durationMinutes Int
+  quality         Int?
+  awakenings      Int?
+  notes           String?
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([bedtime])
+}
+
+model MoodEntry {
+  id           String   @id @default(cuid())
+  userId       String
+  mood         String
+  intensity    Int
+  stressLevel  Int?
+  energyLevel  Int?
+  anxietyLevel Int?
+  notes        String?
+  recordedAt   DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([recordedAt])
+}
+
+model Medication {
+  id           String          @id @default(cuid())
+  userId       String
+  name         String
+  dosageText   String
+  instructions String?
+  schedule     String
+  startDate    DateTime
+  endDate      DateTime?
+  active       Boolean         @default(true)
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs         MedicationLog[]
+
+  @@index([userId])
+  @@index([active])
+}
+
+model MedicationLog {
+  id           String           @id @default(cuid())
+  userId       String
+  medicationId String
+  scheduledAt  DateTime
+  status       MedicationStatus
+  recordedAt   DateTime         @default(now())
+  notes        String?
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medication   Medication       @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([scheduledAt])
+}
+
+model MeasurementEntry {
+  id             String   @id @default(cuid())
+  userId         String
+  type           String
+  value          Float
+  secondaryValue Float?
+  unit           String
+  measuredAt     DateTime
+  notes          String?
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([measuredAt])
+  @@index([type])
+}
+
+model SymptomEntry {
+  id        String    @id @default(cuid())
+  userId    String
+  symptom   String
+  severity  Int
+  painScore Int?
+  startedAt DateTime
+  endedAt   DateTime?
+  trigger   String?
+  notes     String?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([startedAt])
+}
+
+model Reminder {
+  id               String            @id @default(cuid())
+  userId           String
+  category         String
+  scheduledAt      DateTime
+  status           ReminderStatus    @default(PENDING)
+  payload          Json
+  snoozedUntil     DateTime?
+  sentAt           DateTime?
+  cancelledAt      DateTime?
+  createdAt        DateTime          @default(now())
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notificationLogs NotificationLog[]
+
+  @@index([userId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+model PushSubscription {
+  id            String   @id @default(cuid())
+  userId        String
+  endpoint      String   @unique
+  encryptedKeys Json
+  deviceLabel   String?
+  userAgent     String?
+  active        Boolean  @default(true)
+  lastUsedAt    DateTime?
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([active])
+}
+
+model NotificationLog {
+  id               String    @id @default(cuid())
+  userId           String
+  reminderId       String?
+  status           String
+  providerResponse String?
+  attemptedAt      DateTime  @default(now())
+  deliveredAt      DateTime?
+  failedAt         DateTime?
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reminder         Reminder? @relation(fields: [reminderId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([attemptedAt])
+}
+
+model SecurityEvent {
+  id        String   @id @default(cuid())
+  userId    String?
+  eventType String
+  ipAddress String?
+  userAgent String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([eventType])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  actorUserId  String?
+  targetUserId String?
+  action       String
+  resourceType String
+  resourceId   String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+  actor        User?    @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  target       User?    @relation("AuditTarget", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId])
+  @@index([targetUserId])
+  @@index([createdAt])
+}

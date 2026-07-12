@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --track-cloud: #F7FCFF;
+  --track-ice: #E6F7FF;
+  --track-aqua-soft: #CDEEFF;
+  --track-aqua: #8FD8F7;
+  --track-sky-light: #45BDF5;
+  --track-sky: #0A96F0;
+  --track-sky-dark: #0878CF;
+  --track-ocean: #0759A8;
+  --track-ocean-deep: #063A78;
+  --track-navy: #082844;
+  --track-red: #F1222E;
+  --track-red-dark: #C91320;
+  --track-yellow: #FFD42A;
+  --track-yellow-dark: #E8B900;
+  --track-success: #159B6C;
+  --track-warning: #E99A16;
+  --track-error: #D61F2C;
+  --track-info: #0A96F0;
+  --track-text-primary: #082844;
+  --track-text-secondary: #456477;
+  --track-text-muted: #698494;
+  --track-text-inverse: #FFFFFF;
+  --track-border-light: rgba(143, 216, 247, 0.52);
+  --track-border-strong: rgba(10, 150, 240, 0.44);
+  --track-glass-light: rgba(247, 252, 255, 0.62);
+  --track-glass-medium: rgba(230, 247, 255, 0.56);
+  --track-glass-blue: rgba(10, 150, 240, 0.18);
+  --track-glass-dark: rgba(6, 58, 120, 0.66);
+  --track-shadow-soft: 0 12px 36px rgba(6, 58, 120, 0.12);
+  --track-shadow-medium: 0 18px 48px rgba(6, 58, 120, 0.18);
+  --track-glow-blue: 0 0 26px rgba(10, 150, 240, 0.34);
+  --track-glow-red: 0 0 22px rgba(241, 34, 46, 0.26);
+  --track-glow-yellow: 0 0 22px rgba(255, 212, 42, 0.32);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color: var(--track-text-primary);
+  background: var(--track-ice);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background-image:
+    linear-gradient(rgba(244, 251, 255, 0.54), rgba(222, 245, 255, 0.42)),
+    url("/assets/trackdiri-background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-variant-numeric: tabular-nums;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  outline-color: var(--track-sky);
+}
+
+button {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+button:active {
+  transform: scale(0.97);
+  filter: brightness(0.96);
+}
+
+.track-glass-card {
+  background: rgba(247, 252, 255, 0.62);
+  border: 1px solid rgba(143, 216, 247, 0.58);
+  backdrop-filter: blur(22px) saturate(125%);
+  -webkit-backdrop-filter: blur(22px) saturate(125%);
+  box-shadow: 0 14px 42px rgba(6, 58, 120, 0.14);
+}
+
+.track-input {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--track-border-light);
+  background: rgba(247, 252, 255, 0.92);
+  padding: 0.8rem 0.9rem;
+  color: var(--track-navy);
+}
+
+.track-button-primary {
+  min-height: 44px;
+  border-radius: 8px;
+  background: var(--track-sky);
+  color: white;
+  font-weight: 800;
+  box-shadow: var(--track-glow-blue);
+}
+
+.track-button-primary:hover {
+  background: var(--track-sky-dark);
+}
+
+.track-button-secondary {
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--track-border-strong);
+  background: rgba(247, 252, 255, 0.82);
+  color: var(--track-ocean);
+  font-weight: 800;
+}
+
+.interactive-card {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.interactive-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(10, 150, 240, 0.62);
+  box-shadow: var(--track-shadow-medium);
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(205, 238, 255, 0.5),
+    rgba(247, 252, 255, 0.9),
+    rgba(205, 238, 255, 0.5)
+  );
+  background-size: 240% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position-x: -240%;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .track-glass-card {
+    background: rgba(247, 252, 255, 0.94);
+  }
+}
