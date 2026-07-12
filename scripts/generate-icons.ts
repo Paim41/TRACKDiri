@@ -12,14 +12,14 @@ async function main() {
   await Promise.all(
     sizes.map((size) =>
       sharp(source)
-        .resize(size, size, { fit: "contain", background: { r: 230, g: 247, b: 255, alpha: 1 } })
+        .resize(size, size, { fit: "contain", background: { r: 230, g: 247, b: 255, alpha: 0 } })
         .png()
         .toFile(path.join(outDir, `icon-${size}.png`))
     )
   );
   await sharp(source)
     .resize(410, 410, { fit: "contain", background: { r: 230, g: 247, b: 255, alpha: 0 } })
-    .extend({ top: 51, bottom: 51, left: 51, right: 51, background: { r: 230, g: 247, b: 255, alpha: 1 } })
+    .extend({ top: 51, bottom: 51, left: 51, right: 51, background: { r: 230, g: 247, b: 255, alpha: 0 } })
     .png()
     .toFile(path.join(outDir, "maskable-512.png"));
 }

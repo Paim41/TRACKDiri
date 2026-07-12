@@ -36,6 +36,8 @@ test("auth pages stay fixed to the viewport", async ({ page }) => {
     });
     expect(hasPageScroll, `${path} should not create page-level scrolling`).toBe(false);
   }
+  await page.goto("/register");
+  await expect(page.getByRole("button", { name: "Create Account" })).toBeVisible();
 });
 
 test("password character follows visibility state", async ({ page, isMobile }) => {

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Check, Eye, EyeOff, Loader2 } from "lucide-react";
@@ -27,9 +26,14 @@ export function AuthForm({ mode, token }: { mode: Mode; token?: string }) {
   const passwordReady = passwordRequirements.every((requirement) => requirement[1]);
   const passwordsMatch = password.length > 0 && password === confirmPassword;
   const submitDisabled = loading || (needsPasswordValidation && (!passwordReady || !passwordsMatch));
-  const characterSrc = showPassword
-    ? "/assets/trackdiri-character-open.png"
-    : "/assets/trackdiri-character-closed.png";
+  function setPasswordVisibility(visible: boolean) {
+    setShowPassword(visible);
+    window.dispatchEvent(
+      new CustomEvent("trackdiri-password-visibility", {
+        detail: { visible }
+      })
+    );
+  }
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,42 +83,23 @@ export function AuthForm({ mode, token }: { mode: Mode; token?: string }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="relative space-y-3" noValidate>
-      {mode !== "forgot" ? (
-        <div
-          className="auth-peek-character pointer-events-none absolute -right-44 top-16 hidden w-40 lg:block xl:-right-52 xl:w-48"
-          data-testid="auth-peek-character"
-          aria-hidden="true"
-        >
-          <div className="relative h-48 w-full xl:h-56">
-            <Image
-              src={characterSrc}
-              alt=""
-              data-testid="auth-peek-character-image"
-              fill
-              sizes="192px"
-              className="object-contain drop-shadow-[0_18px_30px_rgba(6,58,120,.22)] transition-all duration-300"
-              priority
-            />
-          </div>
-        </div>
-      ) : null}
+    <form onSubmit={onSubmit} className="relative space-y-2.5 sm:space-y-3" noValidate>
       {mode === "register" ? (
         <label className="block text-sm font-bold text-track-navy">
           Full name
-          <input className="track-input mt-2" name="name" autoComplete="name" required />
+          <input className="track-input mt-1.5" name="name" autoComplete="name" required />
         </label>
       ) : null}
       {mode !== "reset" ? (
         <label className="block text-sm font-bold text-track-navy">
           Email address
-          <input className="track-input mt-2" name="email" autoComplete="email" type="email" required />
+          <input className="track-input mt-1.5" name="email" autoComplete="email" type="email" required />
         </label>
       ) : null}
       {mode !== "forgot" ? (
         <label className="block text-sm font-bold text-track-navy">
           Password
-          <span className="relative mt-2 block">
+          <span className="relative mt-1.5 block">
             <input
               className="track-input pr-12"
               name="password"
@@ -127,7 +112,7 @@ export function AuthForm({ mode, token }: { mode: Mode; token?: string }) {
             <button
               type="button"
               className="absolute right-2 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-md text-track-ocean"
-              onClick={() => setShowPassword((value) => !value)}
+              onClick={() => setPasswordVisibility(!showPassword)}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -140,7 +125,7 @@ export function AuthForm({ mode, token }: { mode: Mode; token?: string }) {
           <label className="block text-sm font-bold text-track-navy">
             Confirm password
             <input
-              className="track-input mt-2"
+              className="track-input mt-1.5"
               name="confirmPassword"
               type="password"
               autoComplete="new-password"
@@ -151,7 +136,7 @@ export function AuthForm({ mode, token }: { mode: Mode; token?: string }) {
           </label>
           <div id="password-requirements" className="rounded-lg border border-track-border-light bg-white/72 p-2.5">
             <p className="text-sm font-black text-track-ocean">Password requirements</p>
-            <div className="mt-2 grid gap-1.5 text-sm font-semibold text-slate-600 sm:grid-cols-2">
+            <div className="mt-2 grid grid-cols-2 gap-1.5 text-xs font-semibold text-slate-600 sm:text-sm">
               {passwordRequirements.map(([label, passed]) => (
                 <span key={label} className={passed ? "flex items-center gap-2 text-track-success" : "flex items-center gap-2"}>
                   <span
@@ -179,7 +164,7 @@ export function AuthForm({ mode, token }: { mode: Mode; token?: string }) {
             </div>
           </div>
           {!passwordReady || !passwordsMatch ? (
-            <p className="text-sm font-semibold text-track-text-secondary" role="status">
+            <p className="text-xs font-semibold text-track-text-secondary sm:text-sm" role="status">
               Complete every checked requirement before creating the account.
             </p>
           ) : null}

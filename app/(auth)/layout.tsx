@@ -1,4 +1,5 @@
 import { BrandMark } from "@/components/brand";
+import { AuthCharacter } from "@/components/auth-character";
 import { GlassCard } from "@/components/glass";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -6,8 +7,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <main id="main-content" className="grid h-[100dvh] overflow-hidden p-3 lg:grid-cols-[.9fr_1fr] lg:p-5">
       <section className="relative hidden min-h-0 overflow-hidden rounded-xl bg-[url('/assets/trackdiri-background.png')] bg-cover bg-center p-6 lg:block">
         <div className="absolute inset-0 bg-gradient-to-br from-white/55 via-sky-100/38 to-sky-500/20" />
-        <div className="relative z-10 flex h-full flex-col justify-between">
+        <div className="relative z-10 flex h-full flex-col justify-between gap-4">
           <BrandMark />
+          <AuthCharacter />
           <GlassCard className="max-w-md p-4">
             <h1 className="font-heading text-3xl font-black text-track-ocean">Welcome to TRACKDiri</h1>
             <p className="mt-2 font-semibold leading-6 text-slate-700">

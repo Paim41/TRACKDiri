@@ -4,10 +4,10 @@ import { GlassCard } from "@/components/glass";
 
 export default function RegisterPage() {
   return (
-    <GlassCard className="max-h-[calc(100dvh-1.5rem)] p-3 sm:p-4">
-      <div className="mb-3">
+    <GlassCard className="max-h-[calc(100dvh-1rem)] overflow-y-auto p-2.5 sm:p-4">
+      <div className="mb-2 sm:mb-3">
         <BrandMark />
-        <h1 className="mt-3 font-heading text-2xl font-black text-track-ocean">Create Account</h1>
+        <h1 className="mt-2 font-heading text-xl font-black text-track-ocean sm:mt-3 sm:text-2xl">Create Account</h1>
       </div>
       <AuthForm mode="register" />
     </GlassCard>
