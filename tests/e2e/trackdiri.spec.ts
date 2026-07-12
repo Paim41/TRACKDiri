@@ -26,3 +26,26 @@ test("register form shows checked password requirements", async ({ page }) => {
   await expect(page.getByText("Passwords match")).toHaveClass(/text-track-success/);
   await expect(page.getByRole("button", { name: "Create Account" })).toBeEnabled();
 });
+
+test("auth pages stay fixed to the viewport", async ({ page }) => {
+  for (const path of ["/login", "/register", "/forgot-password"]) {
+    await page.goto(path);
+    const hasPageScroll = await page.evaluate(() => {
+      const root = document.scrollingElement ?? document.documentElement;
+      return root.scrollHeight > window.innerHeight + 2;
+    });
+    expect(hasPageScroll, `${path} should not create page-level scrolling`).toBe(false);
+  }
+});
+
+test("password character follows visibility state", async ({ page, isMobile }) => {
+  test.skip(isMobile, "The side character is intentionally hidden on mobile.");
+  await page.goto("/login");
+  const character = page.getByTestId("auth-peek-character");
+  await expect(character).toBeVisible();
+  await expect(page.getByTestId("auth-peek-character-image")).toHaveAttribute("src", /trackdiri-character-closed/);
+  await page.getByRole("button", { name: "Show password" }).click();
+  await expect(page.getByTestId("auth-peek-character-image")).toHaveAttribute("src", /trackdiri-character-open/);
+  await page.getByRole("button", { name: "Hide password" }).click();
+  await expect(page.getByTestId("auth-peek-character-image")).toHaveAttribute("src", /trackdiri-character-closed/);
+});
