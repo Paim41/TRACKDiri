@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Check, Eye, EyeOff, Loader2 } from "lucide-react";
 import { validatePasswordStrength } from "@/lib/password-strength";
 
 type Mode = "login" | "register" | "forgot" | "reset";
@@ -13,7 +13,19 @@ export function AuthForm({ mode, token }: { mode: Mode; token?: string }) {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const strength = useMemo(() => validatePasswordStrength(password), [password]);
+  const passwordRequirements = [
+    ["At least 8 characters", strength.minLength],
+    ["One uppercase letter", strength.uppercase],
+    ["One lowercase letter", strength.lowercase],
+    ["One number", strength.number],
+    ["One special character", strength.special]
+  ] as const;
+  const needsPasswordValidation = mode === "register" || mode === "reset";
+  const passwordReady = passwordRequirements.every((requirement) => requirement[1]);
+  const passwordsMatch = password.length > 0 && password === confirmPassword;
+  const submitDisabled = loading || (needsPasswordValidation && (!passwordReady || !passwordsMatch));
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -87,6 +99,7 @@ export function AuthForm({ mode, token }: { mode: Mode; token?: string }) {
               autoComplete={mode === "login" ? "current-password" : "new-password"}
               required
               onChange={(event) => setPassword(event.target.value)}
+              aria-describedby={needsPasswordValidation ? "password-requirements" : undefined}
             />
             <button
               type="button"
@@ -103,21 +116,50 @@ export function AuthForm({ mode, token }: { mode: Mode; token?: string }) {
         <>
           <label className="block text-sm font-bold text-track-navy">
             Confirm password
-            <input className="track-input mt-2" name="confirmPassword" type="password" autoComplete="new-password" required />
+            <input
+              className="track-input mt-2"
+              name="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              required
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              aria-describedby="password-requirements"
+            />
           </label>
-          <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600">
-            {Object.entries({
-              "8 characters": strength.minLength,
-              Uppercase: strength.uppercase,
-              Lowercase: strength.lowercase,
-              Number: strength.number,
-              "Special character": strength.special
-            }).map(([label, passed]) => (
-              <span key={label} className={passed ? "text-track-success" : ""}>
-                {label}
+          <div id="password-requirements" className="rounded-lg border border-track-border-light bg-white/72 p-3">
+            <p className="text-sm font-black text-track-ocean">Password requirements</p>
+            <div className="mt-2 grid gap-2 text-sm font-semibold text-slate-600 sm:grid-cols-2">
+              {passwordRequirements.map(([label, passed]) => (
+                <span key={label} className={passed ? "flex items-center gap-2 text-track-success" : "flex items-center gap-2"}>
+                  <span
+                    className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${
+                      passed ? "border-track-success bg-track-success text-white" : "border-track-border-strong bg-white/80 text-transparent"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <Check size={13} strokeWidth={3} />
+                  </span>
+                  {label}
+                </span>
+              ))}
+              <span className={passwordsMatch ? "flex items-center gap-2 text-track-success" : "flex items-center gap-2"}>
+                <span
+                  className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${
+                    passwordsMatch ? "border-track-success bg-track-success text-white" : "border-track-border-strong bg-white/80 text-transparent"
+                  }`}
+                  aria-hidden="true"
+                >
+                  <Check size={13} strokeWidth={3} />
+                </span>
+                Passwords match
               </span>
-            ))}
+            </div>
           </div>
+          {!passwordReady || !passwordsMatch ? (
+            <p className="text-sm font-semibold text-track-text-secondary" role="status">
+              Complete every checked requirement before creating the account.
+            </p>
+          ) : null}
         </>
       ) : null}
       {mode === "login" ? (
@@ -139,7 +181,11 @@ export function AuthForm({ mode, token }: { mode: Mode; token?: string }) {
       ) : null}
       {error ? <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-semibold text-track-error">{error}</p> : null}
       {message ? <p className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm font-semibold text-track-success">{message}</p> : null}
-      <button type="submit" disabled={loading} className="track-button-primary flex w-full items-center justify-center gap-2 px-4">
+      <button
+        type="submit"
+        disabled={submitDisabled}
+        className="track-button-primary flex w-full items-center justify-center gap-2 px-4 disabled:cursor-not-allowed disabled:opacity-60"
+      >
         {loading ? <Loader2 className="animate-spin" size={18} /> : null}
         {mode === "register" ? "Create Account" : mode === "forgot" ? "Send Reset Link" : mode === "reset" ? "Set New Password" : "Login"}
       </button>

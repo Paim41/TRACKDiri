@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const clientId = process.env.AUTH_GOOGLE_ID;
   const clientSecret = process.env.AUTH_GOOGLE_SECRET;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? new URL(request.url).origin;
   if (!code || !clientId || !clientSecret) return NextResponse.redirect(`${appUrl}/login?google=failed`);
 
   const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {

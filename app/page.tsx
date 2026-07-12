@@ -23,16 +23,16 @@ const faqs = [
 export default function LandingPage() {
   return (
     <main id="main-content" className="min-h-screen px-4 py-4 text-track-navy sm:px-6 lg:px-8">
-      <header className="track-glass-card mx-auto flex max-w-7xl items-center justify-between rounded-xl px-4 py-3">
+      <header className="track-glass-card mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 rounded-xl px-4 py-3">
         <BrandMark />
         <nav className="hidden items-center gap-6 text-sm font-bold text-track-ocean md:flex">
           <a href="#features">Features</a>
           <a href="#how">How It Works</a>
           <Link href="/privacy">Privacy</Link>
         </nav>
-        <div className="flex items-center gap-2">
-          <Link href="/login" className="track-button-secondary px-4 py-2 text-sm">Login</Link>
-          <Link href="/register" className="track-button-primary px-4 py-2 text-sm">Create Account</Link>
+        <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center">
+          <Link href="/login" className="track-button-secondary px-4 py-2 text-center text-sm">Login</Link>
+          <Link href="/register" className="track-button-primary px-4 py-2 text-center text-sm">Create Account</Link>
         </div>
       </header>
 
@@ -41,7 +41,7 @@ export default function LandingPage() {
           <p className="inline-flex rounded-full border border-track-border-strong bg-white/70 px-4 py-2 text-sm font-black text-track-ocean">
             Real-time daily wellness tracker
           </p>
-          <h1 className="font-heading text-5xl font-black leading-tight text-track-ocean sm:text-6xl">
+          <h1 className="font-heading text-4xl font-black leading-tight text-track-ocean sm:text-6xl">
             Take Control of Your Daily Health
           </h1>
           <p className="max-w-2xl text-lg font-semibold leading-8 text-slate-700">

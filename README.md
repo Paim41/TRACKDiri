@@ -73,6 +73,8 @@ https://your-domain.example/api/auth/google/callback
 
 Set `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET` and `NEXT_PUBLIC_APP_URL`.
 
+See `AUTH_SETUP.md` for the complete production database, Google OAuth, SMTP and Vercel environment setup checklist.
+
 ## Mobile Notifications
 
 Generate VAPID keys and set `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` and `VAPID_SUBJECT`. Users should install the PWA on iOS before enabling notifications. Notification actions open `/app/water?action=record`; TRACKDiri still requires manual confirmation before recording a glass.

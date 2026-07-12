@@ -45,6 +45,7 @@
 html {
   color: var(--track-text-primary);
   background: var(--track-ice);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -96,6 +97,8 @@ button:active {
   background: rgba(247, 252, 255, 0.92);
   padding: 0.8rem 0.9rem;
   color: var(--track-navy);
+  font-size: 16px;
+  line-height: 1.45;
 }
 
 .track-button-primary {

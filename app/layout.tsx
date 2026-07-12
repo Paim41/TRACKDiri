@@ -13,7 +13,12 @@ export const metadata: Metadata = {
   description: "A real-time daily health and hydration tracker.",
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: "/assets/icons/icon-192.png",
+    icon: [
+      { url: "/assets/trackdiri-logo.png", type: "image/png" },
+      { url: "/assets/icons/icon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/assets/icons/icon-192.png", sizes: "192x192", type: "image/png" }
+    ],
+    shortcut: "/assets/trackdiri-logo.png",
     apple: "/assets/icons/icon-180.png"
   }
 };

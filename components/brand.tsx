@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export function TrackLogo({ size = 56 }: { size?: number }) {
   return (
@@ -8,6 +9,7 @@ export function TrackLogo({ size = 56 }: { size?: number }) {
       width={size}
       height={size}
       className="rounded-full object-contain"
+      style={{ width: size, height: size }}
       priority={size > 80}
     />
   );
@@ -15,7 +17,7 @@ export function TrackLogo({ size = 56 }: { size?: number }) {
 
 export function BrandMark({ inverse = false }: { inverse?: boolean }) {
   return (
-    <div className="flex items-center gap-3">
+    <Link href="/" className="flex items-center gap-3 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-track-sky">
       <TrackLogo size={48} />
       <div>
         <p className={`font-heading text-xl font-black ${inverse ? "text-white" : "text-track-ocean"}`}>
@@ -25,6 +27,6 @@ export function BrandMark({ inverse = false }: { inverse?: boolean }) {
           Daily health, clearly tracked
         </p>
       </div>
-    </div>
+    </Link>
   );
 }
