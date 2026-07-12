@@ -9,3 +9,5 @@ test-results
 dist
 *.tsbuildinfo
 public/sw.js
+
+.vercel
