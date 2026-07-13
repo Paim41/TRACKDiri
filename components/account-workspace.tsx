@@ -18,6 +18,25 @@ type AccountData = {
   };
 };
 
+const timezoneOptions = [
+  ["UTC", "UTC"],
+  ["Asia/Kuala_Lumpur", "Malaysia (Kuala Lumpur)"],
+  ["Asia/Singapore", "Singapore"],
+  ["Asia/Jakarta", "Indonesia (Jakarta)"],
+  ["Asia/Bangkok", "Thailand (Bangkok)"],
+  ["Asia/Manila", "Philippines (Manila)"],
+  ["Asia/Tokyo", "Japan (Tokyo)"],
+  ["Asia/Seoul", "South Korea (Seoul)"],
+  ["Asia/Dubai", "UAE (Dubai)"],
+  ["Europe/London", "United Kingdom (London)"],
+  ["Europe/Paris", "Central Europe (Paris)"],
+  ["America/New_York", "US Eastern (New York)"],
+  ["America/Chicago", "US Central (Chicago)"],
+  ["America/Denver", "US Mountain (Denver)"],
+  ["America/Los_Angeles", "US Pacific (Los Angeles)"],
+  ["Australia/Sydney", "Australia (Sydney)"]
+] as const;
+
 export function AccountWorkspace({ section, account }: { section: "profile" | "settings"; account: AccountData }) {
   if (section === "settings") return <SettingsForm account={account} />;
   return <ProfileForm account={account} />;
@@ -71,7 +90,13 @@ function ProfileForm({ account }: { account: AccountData }) {
           </label>
           <label className="text-sm font-bold text-track-navy">
             Timezone
-            <input name="timezone" className="track-input mt-1.5" defaultValue={account.preference.timezone} placeholder="Asia/Kuala_Lumpur" required />
+            <select name="timezone" className="track-input mt-1.5" defaultValue={account.preference.timezone}>
+              {timezoneOptions.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="text-sm font-bold text-track-navy">
             Measurement system
