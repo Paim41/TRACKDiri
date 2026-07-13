@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { createToken, hashToken } from "@/lib/tokens";
 
 const SESSION_COOKIE = "trackdiri_session";
+const SESSION_TOUCH_INTERVAL_MS = 5 * 60 * 1000;
 
 export async function createSession(userId: string, remember = false) {
   const token = createToken();
@@ -57,10 +58,13 @@ export async function getCurrentUser() {
   if (!session || session.revokedAt || session.expiresAt < new Date()) return null;
   if (session.user.status !== UserStatus.ACTIVE) return null;
 
-  await prisma.session.update({
-    where: { id: session.id },
-    data: { lastActiveAt: new Date() }
-  });
+  const now = new Date();
+  if (now.getTime() - session.lastActiveAt.getTime() > SESSION_TOUCH_INTERVAL_MS) {
+    await prisma.session.update({
+      where: { id: session.id },
+      data: { lastActiveAt: now }
+    });
+  }
 
   return session.user;
 }
