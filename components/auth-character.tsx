@@ -20,14 +20,14 @@ export function AuthCharacter() {
   }, []);
 
   return (
-    <div className="auth-peek-character relative mx-auto hidden h-[42vh] min-h-72 w-full max-w-[440px] lg:block" data-testid="auth-peek-character">
+    <div className="relative mx-auto hidden min-h-[390px] w-full max-w-[640px] flex-1 lg:block" data-testid="auth-peek-character">
       <Image
         src={src}
         alt=""
         data-testid="auth-peek-character-image"
         fill
-        sizes="440px"
-        className="object-contain drop-shadow-[0_22px_36px_rgba(6,58,120,.2)] transition-all duration-300"
+        sizes="640px"
+        className="object-contain drop-shadow-[0_24px_36px_rgba(6,58,120,.22)] transition-opacity duration-200"
         priority
       />
     </div>

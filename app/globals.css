@@ -148,24 +148,9 @@ button:active {
   animation: shimmer 1.4s linear infinite;
 }
 
-.auth-peek-character {
-  animation: auth-character-float 3.6s ease-in-out infinite;
-}
-
 @keyframes shimmer {
   to {
     background-position-x: -240%;
-  }
-}
-
-@keyframes auth-character-float {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-1deg);
-  }
-
-  50% {
-    transform: translateY(-8px) rotate(1deg);
   }
 }
 
