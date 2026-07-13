@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 export function AuthCharacter() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -9,7 +9,7 @@ export function AuthCharacter() {
     ? "/assets/trackdiri-character-open.png"
     : "/assets/trackdiri-character-closed.png";
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     function onVisibilityChange(event: Event) {
       const detail = (event as CustomEvent<{ visible: boolean }>).detail;
       setPasswordVisible(Boolean(detail?.visible));

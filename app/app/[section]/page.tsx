@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Activity, CalendarDays, CheckSquare, Dumbbell, HeartPulse, Moon, Pill, Settings, User, Utensils } from "lucide-react";
 import { GlassCard } from "@/components/glass";
+import { SectionWorkspace } from "@/components/section-workspace";
 import { requireAdministrator, requireUser } from "@/lib/auth";
 
 const pages: Record<string, { title: string; description: string; icon: React.ElementType; admin?: boolean }> = {
@@ -34,14 +35,12 @@ export default async function GenericProtectedPage({ params }: { params: Promise
   }
   const Icon = page.icon;
   return (
-    <main id="main-content" className="mx-auto max-w-5xl p-4 lg:p-8">
+    <main id="main-content" className="mx-auto max-w-5xl space-y-5 p-4 lg:p-8">
       <GlassCard>
         <Icon className="text-track-ocean" size={34} />
         <h1 className="mt-4 font-heading text-3xl font-black text-track-ocean">{page.title}</h1>
         <p className="mt-3 max-w-2xl font-semibold leading-7 text-slate-700">{page.description}</p>
-        <div className="mt-6 rounded-xl border border-track-border-light bg-white/70 p-4 text-sm font-semibold text-slate-700">
-          This section is connected to protected server-side ownership checks and is ready for category-specific forms, history tables and charts.
-        </div>
+        <SectionWorkspace section={section} />
       </GlassCard>
     </main>
   );

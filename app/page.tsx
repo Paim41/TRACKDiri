@@ -30,9 +30,10 @@ export default function LandingPage() {
           <a href="#how">How It Works</a>
           <Link href="/privacy">Privacy</Link>
         </nav>
-        <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center">
-          <Link href="/login" className="track-button-secondary px-4 py-2 text-center text-sm">Login</Link>
-          <Link href="/register" className="track-button-primary px-4 py-2 text-center text-sm">Create Account</Link>
+        <div className="grid w-full grid-cols-3 gap-2 sm:flex sm:w-auto sm:items-center">
+          <Link href="/app/dashboard" className="track-button-secondary px-3 py-2 text-center text-xs sm:px-4 sm:text-sm">Open App</Link>
+          <Link href="/login" className="track-button-secondary px-3 py-2 text-center text-xs sm:px-4 sm:text-sm">Login</Link>
+          <Link href="/register" className="track-button-primary px-3 py-2 text-center text-xs sm:px-4 sm:text-sm">Create Account</Link>
         </div>
       </header>
 
@@ -48,6 +49,7 @@ export default function LandingPage() {
             TRACKDiri helps you record water, sleep, movement, meals, mood and daily wellness habits in one private real-time application.
           </p>
           <div className="flex flex-wrap gap-3">
+            <Link href="/app/dashboard" className="track-button-secondary px-6 py-3">Open Dashboard</Link>
             <Link href="/register" className="track-button-primary px-6 py-3">Create Account</Link>
             <Link href="/login" className="track-button-secondary px-6 py-3">Login</Link>
           </div>

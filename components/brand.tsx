@@ -15,9 +15,9 @@ export function TrackLogo({ size = 64 }: { size?: number }) {
   );
 }
 
-export function BrandMark({ inverse = false }: { inverse?: boolean }) {
+export function BrandMark({ inverse = false, href = "/" }: { inverse?: boolean; href?: string }) {
   return (
-    <Link href="/" className="flex items-center gap-3 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-track-sky">
+    <Link href={href} className="flex items-center gap-3 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-track-sky">
       <TrackLogo size={64} />
       <div>
         <p className={`font-heading text-2xl font-black ${inverse ? "text-white" : "text-track-ocean"}`}>

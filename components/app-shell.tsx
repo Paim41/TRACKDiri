@@ -45,7 +45,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="navigation-background relative hidden max-h-screen overflow-hidden bg-[url('/assets/trackdiri-navigation.png')] bg-cover [background-position:center_bottom] lg:block">
         <div className="absolute inset-0 bg-gradient-to-b from-[#043069]/90 via-[#05559c]/70 to-[#043069]/10" />
         <div className="relative z-10 flex h-screen flex-col p-5 text-white">
-          <BrandMark inverse />
+          <BrandMark inverse href="/app/dashboard" />
           <nav className="mt-8 min-h-0 flex-1 overflow-y-auto pr-1">
             <div className="space-y-2">
               {mainItems.map(([href, label, Icon]) => (
@@ -53,16 +53,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   key={href}
                   href={href}
                   prefetch={false}
+                  data-active={isActive(pathname, href)}
                   className={cn(
-                    "flex min-h-11 items-center gap-3 rounded-lg border border-white/12 bg-white/8 px-3 text-sm font-bold text-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,.14)] backdrop-blur-md transition hover:border-white/30 hover:bg-white/18",
-                    isActive(pathname, href) && "border-white/45 bg-white/25 text-white shadow-[0_12px_32px_rgba(6,58,120,.22),inset_0_1px_0_rgba(255,255,255,.35)]"
+                    "flex min-h-11 items-center gap-3 rounded-lg border border-white/14 bg-white/10 px-3 text-sm font-bold text-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,.14)] backdrop-blur-md transition hover:border-white/35 hover:bg-white/20",
+                    isActive(pathname, href) && "border-white/70 bg-white/88 text-track-ocean shadow-[0_12px_32px_rgba(6,58,120,.24),inset_0_1px_0_rgba(255,255,255,.55)]"
                   )}
                   aria-current={isActive(pathname, href) ? "page" : undefined}
                 >
                   <span
                     className={cn(
                       "grid h-8 w-8 place-items-center rounded-md bg-white/12 text-white",
-                      isActive(pathname, href) && "bg-white text-track-ocean"
+                      isActive(pathname, href) && "bg-track-ocean text-white shadow-[0_8px_18px_rgba(6,58,120,.2)]"
                     )}
                   >
                     <Icon size={18} />
@@ -79,12 +80,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 href={href}
                 prefetch={false}
                 className={cn(
-                  "flex min-h-11 items-center gap-3 rounded-lg border border-white/12 bg-white/8 px-3 text-sm font-bold text-white/90 backdrop-blur-md transition hover:border-white/30 hover:bg-white/18",
-                  isActive(pathname, href) && "border-white/45 bg-white/25 text-white"
+                  "flex min-h-11 items-center gap-3 rounded-lg border border-white/14 bg-white/10 px-3 text-sm font-bold text-white/90 backdrop-blur-md transition hover:border-white/35 hover:bg-white/20",
+                  isActive(pathname, href) && "border-white/70 bg-white/88 text-track-ocean"
                 )}
                 aria-current={isActive(pathname, href) ? "page" : undefined}
               >
-                <Icon size={18} /> {label}
+                <span className={cn("grid h-8 w-8 place-items-center rounded-md bg-white/12 text-white", isActive(pathname, href) && "bg-track-ocean text-white")}>
+                  <Icon size={18} />
+                </span>
+                {label}
               </Link>
             ))}
             <form action="/api/auth/logout" method="post">
@@ -97,7 +101,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
       <div className="min-w-0">
         <header className="sticky top-0 z-30 border-b border-track-border-light bg-white/70 px-4 py-3 backdrop-blur-xl lg:hidden">
-          <BrandMark />
+          <BrandMark href="/app/dashboard" />
         </header>
         {children}
       </div>
@@ -110,7 +114,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             className={cn(
               "grid min-h-14 place-items-center rounded-lg border border-transparent text-xs font-black text-track-ocean transition",
               index === 2 && "mx-auto -mt-6 h-16 w-16 rounded-full bg-track-sky text-white shadow-[0_0_26px_rgba(10,150,240,.34)]",
-              isActive(pathname, href) && index !== 2 && "border-track-border-light bg-white/75 shadow-[0_10px_26px_rgba(6,58,120,.12)]",
+              isActive(pathname, href) && index !== 2 && "border-track-ocean/30 bg-white text-track-ocean shadow-[0_10px_26px_rgba(6,58,120,.14)]",
               isActive(pathname, href) && index === 2 && "bg-track-ocean shadow-[0_0_30px_rgba(10,150,240,.46)]"
             )}
             aria-current={isActive(pathname, href) ? "page" : undefined}
