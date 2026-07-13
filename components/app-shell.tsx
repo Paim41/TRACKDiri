@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, Bell, CalendarDays, CheckSquare, Dumbbell, HeartPulse, Home, LogOut, Moon, Pill, Settings, User, Utensils, Waves } from "lucide-react";
-import { BrandMark } from "@/components/brand";
+import { useState } from "react";
+import { Activity, Bell, CalendarDays, CheckSquare, ChevronLeft, ChevronRight, Dumbbell, HeartPulse, Home, LogOut, Moon, Pill, Settings, User, Utensils, Waves } from "lucide-react";
+import { BrandMark, TrackLogo } from "@/components/brand";
 import { cn } from "@/lib/cn";
 
 const mainItems = [
@@ -39,14 +40,43 @@ function isActive(pathname: string, href: string) {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("trackdiri-nav-collapsed") === "true";
+  });
+
+  function toggleCollapsed() {
+    setCollapsed((value) => {
+      const next = !value;
+      window.localStorage.setItem("trackdiri-nav-collapsed", String(next));
+      return next;
+    });
+  }
 
   return (
-    <div className="min-h-screen pb-24 lg:grid lg:grid-cols-[290px_1fr] lg:pb-0">
+    <div className={cn("min-h-screen pb-24 lg:grid lg:pb-0", collapsed ? "lg:grid-cols-[96px_1fr]" : "lg:grid-cols-[290px_1fr]")}>
       <aside className="navigation-background relative hidden max-h-screen overflow-hidden bg-[url('/assets/trackdiri-navigation.png')] bg-cover [background-position:center_bottom] lg:block">
         <div className="absolute inset-0 bg-gradient-to-b from-[#043069]/90 via-[#05559c]/70 to-[#043069]/10" />
-        <div className="relative z-10 flex h-screen flex-col p-5 text-white">
-          <BrandMark inverse href="/app/dashboard" />
-          <nav className="mt-8 min-h-0 flex-1 overflow-y-auto pr-1">
+        <div className={cn("relative z-10 flex h-screen flex-col text-white transition-[padding] duration-200", collapsed ? "p-3" : "p-5")}>
+          <div className={cn("flex items-center gap-3", collapsed ? "justify-center" : "justify-between")}>
+            {collapsed ? (
+              <Link href="/app/dashboard" aria-label="TRACKDiri dashboard" className="rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-track-sky">
+                <TrackLogo size={56} />
+              </Link>
+            ) : (
+              <BrandMark inverse href="/app/dashboard" />
+            )}
+            <button
+              type="button"
+              onClick={toggleCollapsed}
+              className="grid h-10 w-10 place-items-center rounded-lg border border-white/18 bg-white/12 text-white shadow-[inset_0_1px_0_rgba(255,255,255,.16)] backdrop-blur-md transition hover:border-white/35 hover:bg-white/20"
+              aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
+              title={collapsed ? "Expand navigation" : "Collapse navigation"}
+            >
+              {collapsed ? <ChevronRight size={19} /> : <ChevronLeft size={19} />}
+            </button>
+          </div>
+          <nav className={cn("mt-8 min-h-0 flex-1 overflow-y-auto", collapsed ? "pr-0" : "pr-1")}>
             <div className="space-y-2">
               {mainItems.map(([href, label, Icon]) => (
                 <Link
@@ -54,11 +84,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   href={href}
                   prefetch={false}
                   data-active={isActive(pathname, href)}
+                  title={collapsed ? label : undefined}
                   className={cn(
                     "flex min-h-11 items-center gap-3 rounded-lg border border-white/14 bg-white/10 px-3 text-sm font-bold text-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,.14)] backdrop-blur-md transition hover:border-white/35 hover:bg-white/20",
+                    collapsed && "justify-center px-2",
                     isActive(pathname, href) && "border-white/70 bg-white/88 text-track-ocean shadow-[0_12px_32px_rgba(6,58,120,.24),inset_0_1px_0_rgba(255,255,255,.55)]"
                   )}
                   aria-current={isActive(pathname, href) ? "page" : undefined}
+                  aria-label={collapsed ? label : undefined}
                 >
                   <span
                     className={cn(
@@ -68,7 +101,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   >
                     <Icon size={18} />
                   </span>
-                  {label}
+                  <span className={cn(collapsed && "sr-only")}>{label}</span>
                 </Link>
               ))}
             </div>
@@ -79,21 +112,34 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 key={href}
                 href={href}
                 prefetch={false}
+                title={collapsed ? label : undefined}
                 className={cn(
                   "flex min-h-11 items-center gap-3 rounded-lg border border-white/14 bg-white/10 px-3 text-sm font-bold text-white/90 backdrop-blur-md transition hover:border-white/35 hover:bg-white/20",
+                  collapsed && "justify-center px-2",
                   isActive(pathname, href) && "border-white/70 bg-white/88 text-track-ocean"
                 )}
                 aria-current={isActive(pathname, href) ? "page" : undefined}
+                aria-label={collapsed ? label : undefined}
               >
                 <span className={cn("grid h-8 w-8 place-items-center rounded-md bg-white/12 text-white", isActive(pathname, href) && "bg-track-ocean text-white")}>
                   <Icon size={18} />
                 </span>
-                {label}
+                <span className={cn(collapsed && "sr-only")}>{label}</span>
               </Link>
             ))}
             <form action="/api/auth/logout" method="post">
-              <button className="flex min-h-11 w-full items-center gap-3 rounded-lg border border-white/12 bg-white/8 px-3 text-left text-sm font-bold text-white/90 backdrop-blur-md transition hover:border-white/30 hover:bg-white/18">
-                <LogOut size={18} /> Logout
+              <button
+                className={cn(
+                  "flex min-h-11 w-full items-center gap-3 rounded-lg border border-white/12 bg-white/8 px-3 text-left text-sm font-bold text-white/90 backdrop-blur-md transition hover:border-white/30 hover:bg-white/18",
+                  collapsed && "justify-center px-2"
+                )}
+                aria-label={collapsed ? "Logout" : undefined}
+                title={collapsed ? "Logout" : undefined}
+              >
+                <span className="grid h-8 w-8 place-items-center rounded-md bg-white/12 text-white">
+                  <LogOut size={18} />
+                </span>
+                <span className={cn(collapsed && "sr-only")}>Logout</span>
               </button>
             </form>
           </div>
