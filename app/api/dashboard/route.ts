@@ -8,7 +8,7 @@ export async function GET() {
   const timezone = user.preference?.timezone ?? "UTC";
   const settings = user.waterSetting ?? (await prisma.waterSetting.create({ data: { userId: user.id } }));
   const range = getZonedDayRange(new Date(), timezone);
-  const [waterEntries, meals, exercise, sleep, mood] = await Promise.all([
+  const [waterEntries, meals, exercise, sleep, mood] = await prisma.$transaction([
     prisma.waterEntry.findMany({ where: { userId: user.id, consumedAt: { gte: range.start, lte: range.end } } }),
     prisma.mealEntry.count({ where: { userId: user.id, consumedAt: { gte: range.start, lte: range.end } } }),
     prisma.exerciseEntry.aggregate({ where: { userId: user.id, startedAt: { gte: range.start, lte: range.end } }, _sum: { durationMinutes: true } }),

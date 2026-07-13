@@ -16,7 +16,7 @@ export default async function DashboardPage() {
       data: { userId: user.id }
     }));
   const range = getZonedDayRange(new Date(), timezone);
-  const [waterEntries, meals, exercise, sleep, mood, checklistTemplates, checklistCompletions] = await Promise.all([
+  const [waterEntries, meals, exercise, sleep, mood, checklistTemplates, checklistCompletions] = await prisma.$transaction([
     prisma.waterEntry.findMany({ where: { userId: user.id, consumedAt: { gte: range.start, lte: range.end } }, orderBy: { consumedAt: "asc" } }),
     prisma.mealEntry.count({ where: { userId: user.id, consumedAt: { gte: range.start, lte: range.end } } }),
     prisma.exerciseEntry.aggregate({ where: { userId: user.id, startedAt: { gte: range.start, lte: range.end } }, _sum: { durationMinutes: true } }),
