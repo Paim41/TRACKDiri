@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
-import { Activity, CalendarDays, CheckSquare, Dumbbell, HeartPulse, Moon, Pill, Settings, User, Utensils } from "lucide-react";
+import { Activity, CalendarDays, CheckSquare, Construction, Dumbbell, HeartPulse, Moon, Pill, Settings, User, Utensils } from "lucide-react";
 import { GlassCard } from "@/components/glass";
+import { AccountWorkspace } from "@/components/account-workspace";
 import { SectionWorkspace } from "@/components/section-workspace";
 import { requireAdministrator, requireUser } from "@/lib/auth";
 
@@ -24,24 +25,62 @@ const pages: Record<string, { title: string; description: string; icon: React.El
   admin: { title: "Admin Overview", description: "Administrative tools for users, delivery logs, security events and app health.", icon: Settings, admin: true }
 };
 
+const maintenanceSections = new Set(["meals", "exercise", "sleep", "mood", "medication", "calendar", "insights", "reminders"]);
+
 export default async function GenericProtectedPage({ params }: { params: Promise<{ section: string }> }) {
   const { section } = await params;
   const page = pages[section];
   if (!page) notFound();
-  if (page.admin) {
-    await requireAdministrator();
-  } else {
-    await requireUser();
-  }
+  const user = page.admin ? await requireAdministrator() : await requireUser();
   const Icon = page.icon;
+  const account = {
+    name: user.name,
+    email: user.email,
+    emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
+    preference: {
+      timezone: user.preference?.timezone ?? "UTC",
+      measurementSystem: user.preference?.measurementSystem ?? "METRIC",
+      theme: user.preference?.theme ?? "SYSTEM",
+      reducedMotion: user.preference?.reducedMotion ?? false,
+      notificationEnabled: user.preference?.notificationEnabled ?? false,
+      quietHoursStart: user.preference?.quietHoursStart ?? "22:00",
+      quietHoursEnd: user.preference?.quietHoursEnd ?? "08:00"
+    }
+  };
+
   return (
     <main id="main-content" className="mx-auto max-w-5xl space-y-5 p-4 lg:p-8">
       <GlassCard>
         <Icon className="text-track-ocean" size={34} />
         <h1 className="mt-4 font-heading text-3xl font-black text-track-ocean">{page.title}</h1>
         <p className="mt-3 max-w-2xl font-semibold leading-7 text-slate-700">{page.description}</p>
-        <SectionWorkspace section={section} />
+        {maintenanceSections.has(section) ? (
+          <MaintenancePanel />
+        ) : section === "profile" || section === "settings" ? (
+          <AccountWorkspace section={section} account={account} />
+        ) : (
+          <SectionWorkspace section={section} />
+        )}
       </GlassCard>
     </main>
+  );
+}
+
+function MaintenancePanel() {
+  return (
+    <div className="mt-6 rounded-lg border border-sky-200 bg-white/78 p-5">
+      <div className="flex flex-wrap items-start gap-4">
+        <div className="grid h-12 w-12 place-items-center rounded-lg bg-track-ocean text-white shadow-[0_14px_32px_rgba(6,58,120,.18)]">
+          <Construction size={24} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-black uppercase tracking-wide text-track-sky">Temporarily closed</p>
+          <h2 className="mt-1 font-heading text-2xl font-black text-track-ocean">This tracker is under maintenance.</h2>
+          <p className="mt-2 max-w-2xl font-semibold leading-7 text-slate-700">
+            We are polishing this page before opening it again. Dashboard, Today, Water, Profile and Settings remain available.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }

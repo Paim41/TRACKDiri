@@ -16,50 +16,6 @@ const quickForms: Record<string, { title: string; fields: Field[] }> = {
   today: {
     title: "Add today's checklist item",
     fields: [{ name: "title", label: "Checklist item", placeholder: "Morning walk, vitamins, stretching" }]
-  },
-  meals: {
-    title: "Log a meal",
-    fields: [
-      { name: "title", label: "Meal", placeholder: "Chicken rice, oatmeal, fruit bowl" },
-      { name: "mealType", label: "Type", type: "select", options: ["Breakfast", "Lunch", "Dinner", "Snack"] }
-    ]
-  },
-  exercise: {
-    title: "Log exercise",
-    fields: [
-      { name: "activityType", label: "Activity", placeholder: "Walking, cycling, gym" },
-      { name: "durationMinutes", label: "Minutes", type: "number", defaultValue: "20" }
-    ]
-  },
-  sleep: {
-    title: "Log last sleep",
-    fields: [
-      { name: "durationHours", label: "Hours slept", type: "number", defaultValue: "8" },
-      { name: "quality", label: "Quality", type: "select", options: ["1", "2", "3", "4", "5"] }
-    ]
-  },
-  mood: {
-    title: "Log mood",
-    fields: [
-      { name: "mood", label: "Mood", type: "select", options: ["Calm", "Happy", "Tired", "Stressed", "Anxious", "Focused"] },
-      { name: "intensity", label: "Intensity 1-10", type: "number", defaultValue: "5" }
-    ]
-  },
-  medication: {
-    title: "Add medication",
-    fields: [
-      { name: "name", label: "Name", placeholder: "Medication name" },
-      { name: "dosageText", label: "Dosage text", placeholder: "1 tablet" },
-      { name: "schedule", label: "Schedule", placeholder: "Daily after breakfast" }
-    ]
-  },
-  reminders: {
-    title: "Create reminder",
-    fields: [
-      { name: "category", label: "Category", type: "select", options: ["water", "meal", "exercise", "medication", "general"] },
-      { name: "minutesFromNow", label: "Minutes from now", type: "number", defaultValue: "60" },
-      { name: "note", label: "Note", placeholder: "Drink water" }
-    ]
   }
 };
 
